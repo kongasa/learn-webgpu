@@ -12,5 +12,8 @@
     "@webgpu/types": "^0.1.40",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "@math.gl/core": "^4.0.1"
   }
 }

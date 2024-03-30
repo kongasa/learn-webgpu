@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  '@math.gl/core':
+    specifier: ^4.0.1
+    version: 4.0.1
+
 devDependencies:
   '@webgpu/types':
     specifier: ^0.1.40
@@ -223,6 +228,16 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@math.gl/core@4.0.1:
+    resolution: {integrity: sha512-9IewNjR9V66o+gYIIq5agFoHy6ZT6DRpRGQBfsUpZz4glAqOjVt64he8GGzjpmqfT+kKT4qwQ7nQl/hZLF15qA==}
+    dependencies:
+      '@math.gl/types': 4.0.1
+    dev: false
+
+  /@math.gl/types@4.0.1:
+    resolution: {integrity: sha512-E9qBKAjVBiZD8Is7TbygiLGtYBP3GSLus6RUJSuzFQegdYXeVagvrs4UkBJxhrRAxw4crfH0Tq7IhTMKuuJNQw==}
+    dev: false
 
   /@rollup/rollup-android-arm-eabi@4.13.0:
     resolution: {integrity: sha512-5ZYPOuaAqEH/W3gYsRkxQATBW3Ii1MfaT4EQstTnLKViLi2gLSQmlmtTpGucNP3sXEpOiI5tdGhjdE111ekyEg==}
