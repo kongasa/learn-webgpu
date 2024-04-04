@@ -1,5 +1,5 @@
 import "./style.css";
-import { Camera } from "./utils/camera";
+import { FpsCamera, registerKeyboard } from "./utils/fps";
 import {
   initGpu,
   getGpuContext,
@@ -229,7 +229,7 @@ const bindGroup = device.createBindGroup({
 
 let lastFrameTime: number | undefined = undefined;
 
-const camera = new Camera();
+const camera = new FpsCamera();
 camera.lookAtXyz(0, 0, -1);
 
 function drawAccordingToTimestamp(time: number) {
@@ -238,7 +238,7 @@ function drawAccordingToTimestamp(time: number) {
   }
   const dt = time - lastFrameTime;
 
-  camera.positionByXyz(0, dt / 1000000, 0 / 100000);
+  camera.update(dt);
   const lookAtMatrix = camera.mat();
   idtty
     .identity()
@@ -272,4 +272,5 @@ function drawAccordingToTimestamp(time: number) {
   requestAnimationFrame(drawAccordingToTimestamp);
 }
 
+registerKeyboard();
 requestAnimationFrame(drawAccordingToTimestamp);
