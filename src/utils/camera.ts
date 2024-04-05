@@ -58,19 +58,19 @@ export class Camera {
     return [
       rx,
       ux,
-      dx,
+      -dx,
       0,
       ry,
       uy,
-      dy,
+      -dy,
       0,
       rz,
       uz,
-      dz,
+      -dz,
       0,
       -rx * px - ry * py - rz * pz,
       -ux * px - uy * py - uz * pz,
-      -dx * px - dy * py - dz * pz,
+      dx * px + dy * py + dz * pz,
       1,
     ];
   }
