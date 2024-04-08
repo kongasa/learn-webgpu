@@ -5,7 +5,6 @@ export type Vec = [number, number, number, number];
 
 export function norm([x, y, z]: DVec): DVec {
   const l = Math.sqrt(x * x + y * y + z * z);
-  console.log(l);
   return [x / l, y / l, z / l, 0];
 }
 export function cross(a: DVec, b: DVec): DVec {
