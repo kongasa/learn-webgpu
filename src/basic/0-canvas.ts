@@ -4,7 +4,7 @@ import {
   getGpuContext,
   assertContext,
   initCanvas,
-} from "./utils/init";
+} from "../utils/init";
 
 const canvas = document.createElement("canvas");
 canvas.width = 800;

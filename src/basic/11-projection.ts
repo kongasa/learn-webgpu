@@ -1,13 +1,13 @@
 import "./style.css";
-import { FpsCamera, registerKeyboard } from "./utils/fps";
+import { FpsCamera, registerKeyboard } from "../utils/fps";
 import {
   initGpu,
   getGpuContext,
   assertContext,
   initCanvas,
-} from "./utils/init";
+} from "../utils/init";
 import { Matrix4 } from "@math.gl/core";
-import { getProjection } from "./utils/projection";
+import { getProjection } from "../utils/projection";
 
 const canvas = document.createElement("canvas");
 canvas.width = 800;
@@ -51,29 +51,47 @@ device.queue.writeTexture(
 const sampler = device.createSampler();
 
 const aCube = new Float32Array([
-  -0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 0, 0.2, 0.2,
-  0.2, 0, 0, 1, 1, 1, 1, -0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 0.2, 0.2, 0.2, 0, 1,
-  0, 1, 1, 1, -0.2, 0.2, 0.2, 0, 0, 1, 1, 0, 1,
+  -0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0,
+  0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 0,
+  0.2, 0.2, 0.2, 0, 0, 1, 1, 1, 1,
+  -0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0,
+  0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 1,
+  -0.2, 0.2, 0.2, 0, 0, 1, 1, 0, 1,
 
-  -0.2, 0.2, 0.2, 1, 0, 0, 1, 0, 0, 0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 0, 0.2, 0.2,
-  0, 0, 0, 1, 1, 1, 1, -0.2, 0.2, 0.2, 1, 0, 0, 1, 0, 0, 0.2, 0.2, 0, 0, 1, 0,
-  1, 1, 1, -0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
+  -0.2, 0.2, 0.2, 1, 0, 0, 1, 0, 0,
+  0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 0,
+  0.2, 0.2, 0, 0, 0, 1, 1, 1, 1, 
+  -0.2, 0.2, 0.2, 1, 0, 0, 1, 0, 0, 
+  0.2, 0.2, 0, 0, 1, 0, 1, 1, 1,
+  -0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
 
-  0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 0.2, 0.2, 0,
-  0, 0, 1, 1, 1, 1, 0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 0.2, 0.2, 0, 0, 1, 0, 1,
-  1, 1, 0.2, 0.2, 0.2, 0, 0, 1, 1, 0, 1,
+  0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 
+  0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 
+  0.2, 0.2, 0, 0, 0, 1, 1, 1, 1, 
+  0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 
+  0.2, 0.2, 0, 0,1, 0, 1, 1, 1, 
+  0.2, 0.2, 0.2, 0, 0, 1, 1, 0, 1,
 
-  0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, -0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, -0.2, 0.2, 0,
-  0, 0, 1, 1, 1, 1, 0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, -0.2, 0.2, 0, 0, 1, 0, 1, 1,
-  1, 0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
+  0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
+  -0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 
+  -0.2, 0.2, 0, 0, 0, 1, 1, 1, 1, 
+  0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
+  -0.2, 0.2, 0, 0, 1, 0, 1, 1, 1, 
+  0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
 
-  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 0.2, -0.2,
-  0.2, 0, 0, 1, 1, 1, 1, -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 0.2, -0.2, 0.2, 0, 1,
-  0, 1, 1, 1, -0.2, -0.2, 0.2, 0, 0, 1, 1, 0, 1,
+  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
+  0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 
+  0.2,-0.2, 0.2, 0, 0, 1, 1, 1, 1, 
+  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
+  0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 1, 
+  -0.2, -0.2, 0.2, 0, 0, 1, 1, 0, 1,
 
-  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, -0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 0, -0.2, 0.2,
-  0.2, 0, 0, 1, 1, 1, 1, -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, -0.2, 0.2, 0.2, 0, 1,
-  0, 1, 1, 1, -0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
+  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
+  -0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 0, 
+  -0.2, 0.2, 0.2, 0, 0, 1, 1, 1, 1, 
+  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
+  -0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 1, 
+  -0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
 ]);
 
 const cubeGpuBuffer = device.createBuffer({
@@ -167,11 +185,6 @@ const pipeline = device.createRenderPipeline({
     entryPoint: "fragmentMain",
     targets: [{ format: navigator.gpu.getPreferredCanvasFormat() }],
   },
-  depthStencil: {
-    depthWriteEnabled: true,
-    depthCompare: "less",
-    format: "depth24plus",
-  },
 });
 
 const bindGroup = device.createBindGroup({
@@ -188,15 +201,8 @@ const bindGroup = device.createBindGroup({
 let lastFrameTime: number | undefined = undefined;
 
 const camera = new FpsCamera();
-camera.positionXyz(0, 0, 1);
+camera.positionXyz(0,0,1);
 camera.lookAtXyz(0, 0, -1);
-
-const depthTexture = device.createTexture({
-  label: "depth texture",
-  size: { width: canvas.width, height: canvas.height },
-  format: "depth24plus",
-  usage: GPUTextureUsage.RENDER_ATTACHMENT,
-});
 
 function drawAccordingToTimestamp(time: number) {
   if (lastFrameTime === undefined) {
@@ -221,12 +227,6 @@ function drawAccordingToTimestamp(time: number) {
         storeOp: "store",
       },
     ],
-    depthStencilAttachment: {
-      view: depthTexture.createView(),
-      depthClearValue: 1,
-      depthLoadOp: "clear",
-      depthStoreOp: "store",
-    },
   });
   pass.setPipeline(pipeline);
   pass.setVertexBuffer(0, cubeGpuBuffer);

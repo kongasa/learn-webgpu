@@ -1,11 +1,11 @@
 import "./style.css";
-import { FpsCamera, registerKeyboard } from "./utils/fps";
+import { FpsCamera, registerKeyboard } from "../utils/fps";
 import {
   initGpu,
   getGpuContext,
   assertContext,
   initCanvas,
-} from "./utils/init";
+} from "../utils/init";
 import { Matrix4 } from "@math.gl/core";
 
 const canvas = document.createElement("canvas");

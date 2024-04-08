@@ -4,7 +4,7 @@ import {
   getGpuContext,
   assertContext,
   initCanvas,
-} from "./utils/init";
+} from "../utils/init";
 
 const canvas = document.createElement("canvas");
 canvas.width = 800;
@@ -15,7 +15,11 @@ await initGpu();
 const { device } = assertContext(getGpuContext());
 initCanvas(canvas, device);
 
-const aTriangle = new Float32Array([-0.8, -0.8, 0.8, -0.8, 0, 0.8]);
+const aTriangle = new Float32Array([
+  -0.8, -0.8, 1, 0, 0, 1,
+  0.8, -0.8, 0, 1, 0, 1,
+  0, 0.8, 0, 0, 1, 1,
+]);
 
 const triangleGpuBuffer = device.createBuffer({
   label: "GPU buffer for triangle vertex",
@@ -23,41 +27,42 @@ const triangleGpuBuffer = device.createBuffer({
   usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.VERTEX,
 });
 const triangleGpuBufferLayout: GPUVertexBufferLayout = {
-  arrayStride: (32 / 8) * 2, // { x: 32f, y: 32f }
+  arrayStride: (32 / 8) * 6, // { x: 32f, y: 32f, r: 32f, g: 32f, b: 32f, a: 32f }
   attributes: [
     {
       format: "float32x2",
       offset: 0,
       shaderLocation: 0,
     },
+    {
+      format: "float32x4",
+      offset: (32 / 8) * 2,
+      shaderLocation: 1,
+    },
   ],
 };
 
 device.queue.writeBuffer(triangleGpuBuffer, 0, aTriangle);
 
-const color = new Float32Array([0, 0, 0, 1]);
-
-const colorGpuBuffer = device.createBuffer({
-  label: "color uniform",
-  size: color.byteLength,
-  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
-});
-
-device.queue.writeBuffer(colorGpuBuffer, 0, color);
-
 const shaderModule = device.createShaderModule({
   label: "shaders",
   code: `
-@group(0) @binding(0) var<uniform> color:vec4f;
+struct VertextOutput {
+  @builtin(position) pos: vec4f,
+  @location(0) color: vec4f,
+}
 
 @vertex
-fn vertexMain(@location(0) pos: vec2f) -> @builtin(position) vec4f {
-return vec4f(pos, 0, 1);
+fn vertexMain(@location(0) pos: vec2f, @location(1) color: vec4f) -> VertextOutput {
+  var res: VertextOutput;
+  res.pos = vec4f(pos, 0, 1);
+  res.color = color;
+  return res;
 }
 
 @fragment
-fn fragmentMain() -> @location(0) vec4f {
-return color;
+fn fragmentMain(input: VertextOutput) -> @location(0) vec4f {
+return input.color;
 }
 `,
 });
@@ -76,16 +81,6 @@ const pipeline = device.createRenderPipeline({
     targets: [{ format: navigator.gpu.getPreferredCanvasFormat() }],
   },
 });
-const bindGroup = device.createBindGroup({
-  label: "color bind group",
-  layout: pipeline.getBindGroupLayout(0),
-  entries: [
-    {
-      binding: 0,
-      resource: { buffer: colorGpuBuffer },
-    },
-  ],
-});
 
 const encoder = device.createCommandEncoder();
 const pass = encoder.beginRenderPass({
@@ -100,7 +95,6 @@ const pass = encoder.beginRenderPass({
 });
 pass.setPipeline(pipeline);
 pass.setVertexBuffer(0, triangleGpuBuffer);
-pass.setBindGroup(0,bindGroup);
 pass.draw(3);
 pass.end();
 device.queue.submit([encoder.finish()]);

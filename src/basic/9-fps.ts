@@ -1,13 +1,12 @@
 import "./style.css";
-import { FpsCamera, registerKeyboard } from "./utils/fps";
+import { FpsCamera, registerKeyboard } from "../utils/fps";
 import {
   initGpu,
   getGpuContext,
   assertContext,
   initCanvas,
-} from "./utils/init";
+} from "../utils/init";
 import { Matrix4 } from "@math.gl/core";
-import { getProjection } from "./utils/projection";
 
 const canvas = document.createElement("canvas");
 canvas.width = 800;
@@ -51,47 +50,29 @@ device.queue.writeTexture(
 const sampler = device.createSampler();
 
 const aCube = new Float32Array([
-  -0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0,
-  0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 0,
-  0.2, 0.2, 0.2, 0, 0, 1, 1, 1, 1,
-  -0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0,
-  0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 1,
-  -0.2, 0.2, 0.2, 0, 0, 1, 1, 0, 1,
+  -0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 0, 0.8, 0.8,
+  0.8, 0, 0, 1, 1, 1, 1, -0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, 0.8, 0, 1,
+  0, 1, 1, 1, -0.8, 0.8, 0.8, 0, 0, 1, 1, 0, 1,
 
-  -0.2, 0.2, 0.2, 1, 0, 0, 1, 0, 0,
-  0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 0,
-  0.2, 0.2, 0, 0, 0, 1, 1, 1, 1, 
-  -0.2, 0.2, 0.2, 1, 0, 0, 1, 0, 0, 
-  0.2, 0.2, 0, 0, 1, 0, 1, 1, 1,
-  -0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
+  -0.8, 0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, 0.8, 0, 1, 0, 1, 1, 0, 0.8, 0.8,
+  -0.8, 0, 0, 1, 1, 1, 1, -0.8, 0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, -0.8, 0,
+  1, 0, 1, 1, 1, -0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
 
-  0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 
-  0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 
-  0.2, 0.2, 0, 0, 0, 1, 1, 1, 1, 
-  0.2, -0.2, 0.2, 1, 0, 0, 1, 0, 0, 
-  0.2, 0.2, 0, 0,1, 0, 1, 1, 1, 
-  0.2, 0.2, 0.2, 0, 0, 1, 1, 0, 1,
+  0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0, 0.8, 0.8,
+  -0.8, 0, 0, 1, 1, 1, 1, 0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, -0.8, 0,
+  1, 0, 1, 1, 1, 0.8, 0.8, 0.8, 0, 0, 1, 1, 0, 1,
 
-  0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
-  -0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 
-  -0.2, 0.2, 0, 0, 0, 1, 1, 1, 1, 
-  0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
-  -0.2, 0.2, 0, 0, 1, 0, 1, 1, 1, 
-  0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
+  0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0, -0.8,
+  0.8, -0.8, 0, 0, 1, 1, 1, 1, 0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, 0.8,
+  -0.8, 0, 1, 0, 1, 1, 1, 0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
 
-  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
-  0.2, -0.2, 0, 0, 1, 0, 1, 1, 0, 
-  0.2,-0.2, 0.2, 0, 0, 1, 1, 1, 1, 
-  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
-  0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 1, 
-  -0.2, -0.2, 0.2, 0, 0, 1, 1, 0, 1,
+  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0, 0.8,
+  -0.8, 0.8, 0, 0, 1, 1, 1, 1, -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8,
+  0.8, 0, 1, 0, 1, 1, 1, -0.8, -0.8, 0.8, 0, 0, 1, 1, 0, 1,
 
-  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
-  -0.2, -0.2, 0.2, 0, 1, 0, 1, 1, 0, 
-  -0.2, 0.2, 0.2, 0, 0, 1, 1, 1, 1, 
-  -0.2, -0.2, 0, 1, 0, 0, 1, 0, 0, 
-  -0.2, 0.2, 0.2, 0, 1, 0, 1, 1, 1, 
-  -0.2, 0.2, 0, 0, 0, 1, 1, 0, 1,
+  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 0, -0.8,
+  0.8, 0.8, 0, 0, 1, 1, 1, 1, -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, 0.8,
+  0.8, 0, 1, 0, 1, 1, 1, -0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
 ]);
 
 const cubeGpuBuffer = device.createBuffer({
@@ -122,22 +103,69 @@ const CubeGpuBufferLayout: GPUVertexBufferLayout = {
 
 device.queue.writeBuffer(cubeGpuBuffer, 0, aCube);
 
-const view = new Float32Array(16);
-const projection = new Float32Array(16);
+const pi = 3.14159265359;
+const idtty = new Matrix4().identity();
+const trans = new Float32Array(16);
 
-const viewUniformBuffer = device.createBuffer({
+const transUniformBuffer = device.createBuffer({
   label: "trans matrix",
-  size: view.byteLength,
+  size: trans.byteLength,
   usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
 });
-device.queue.writeBuffer(viewUniformBuffer, 0, view);
+console.log(trans.byteLength);
 
-const projectionUniformBuffer = device.createBuffer({
-  label: "projection matrix",
-  size: projection.byteLength,
+device.queue.writeBuffer(transUniformBuffer, 0, trans);
+
+const t2 = new Float32Array([
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  0,
+]);
+const t2UniformBuffer = device.createBuffer({
+  label: "random transf",
+  size: t2.byteLength,
   usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
 });
-device.queue.writeBuffer(projectionUniformBuffer, 0, projection);
+console.log(t2.byteLength);
+
+device.queue.writeBuffer(t2UniformBuffer, 0, t2);
 
 const shaderModule = device.createShaderModule({
   label: "shaders",
@@ -150,16 +178,17 @@ struct VertextOutput {
 
 @group(0) @binding(0) var mSampler: sampler;
 @group(0) @binding(1) var mTexture: texture_2d<f32>;
-@group(0) @binding(2) var<uniform> view: mat4x4f;
-@group(0) @binding(3) var<uniform> projection: mat4x4f;
+@group(0) @binding(2) var<uniform> trans: mat4x4f;
+@group(0) @binding(3) var<uniform> t2: array<vec4f,10>;
 
 @vertex
 fn vertexMain(
   @location(0) pos: vec3f,
   @location(1) color: vec4f,
-  @location(2) uv: vec2f) -> VertextOutput {
+  @location(2) uv: vec2f,
+  @builtin(instance_index) instance: u32) -> VertextOutput {
   var res: VertextOutput;
-  res.pos = projection * view * vec4f(pos, 1);
+  res.pos = trans * vec4f(pos, 1) + t2[instance % 10];
   res.color = color;
   res.tec = uv;
   return res;
@@ -167,7 +196,7 @@ fn vertexMain(
 
 @fragment
 fn fragmentMain(input: VertextOutput) -> @location(0) vec4f {
-return textureSample(mTexture, mSampler, input.tec);
+return textureSample(mTexture, mSampler, input.tec) * input.color;
 }
 `,
 });
@@ -193,15 +222,14 @@ const bindGroup = device.createBindGroup({
   entries: [
     { binding: 0, resource: sampler },
     { binding: 1, resource: texture.createView() },
-    { binding: 2, resource: { buffer: viewUniformBuffer } },
-    { binding: 3, resource: { buffer: projectionUniformBuffer } },
+    { binding: 2, resource: { buffer: transUniformBuffer } },
+    { binding: 3, resource: { buffer: t2UniformBuffer } },
   ],
 });
 
 let lastFrameTime: number | undefined = undefined;
 
 const camera = new FpsCamera();
-camera.positionXyz(0,0,1);
 camera.lookAtXyz(0, 0, -1);
 
 function drawAccordingToTimestamp(time: number) {
@@ -212,10 +240,16 @@ function drawAccordingToTimestamp(time: number) {
 
   camera.update(dt);
   const lookAtMatrix = camera.mat();
-  new Matrix4(lookAtMatrix).toArray(view);
-  getProjection().toArray(projection);
-  device.queue.writeBuffer(viewUniformBuffer, 0, view);
-  device.queue.writeBuffer(projectionUniformBuffer, 0, projection);
+  idtty
+    .identity()
+    .translate([0, 0, 0])
+    .rotateZ((pi * dt) / 5000)
+    .rotateX((pi * dt) / 6000)
+    .rotateY((pi * dt) / 6000)
+    .scale(0.05)
+    .multiplyLeft(new Matrix4(lookAtMatrix))
+    .toArray(trans);
+  device.queue.writeBuffer(transUniformBuffer, 0, trans);
 
   const encoder = device.createCommandEncoder();
   const pass = encoder.beginRenderPass({
@@ -231,7 +265,7 @@ function drawAccordingToTimestamp(time: number) {
   pass.setPipeline(pipeline);
   pass.setVertexBuffer(0, cubeGpuBuffer);
   pass.setBindGroup(0, bindGroup);
-  pass.draw(6 * 6);
+  pass.draw(6 * 6, 10);
   pass.end();
   device.queue.submit([encoder.finish()]);
 

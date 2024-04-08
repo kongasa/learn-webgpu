@@ -1,12 +1,11 @@
 import "./style.css";
-import { FpsCamera, registerKeyboard } from "./utils/fps";
 import {
   initGpu,
   getGpuContext,
   assertContext,
   initCanvas,
-} from "./utils/init";
-import { Matrix4 } from "@math.gl/core";
+} from "../utils/init";
+import { Matrix4 } from '@math.gl/core';
 
 const canvas = document.createElement("canvas");
 canvas.width = 800;
@@ -50,29 +49,47 @@ device.queue.writeTexture(
 const sampler = device.createSampler();
 
 const aCube = new Float32Array([
-  -0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 0, 0.8, 0.8,
-  0.8, 0, 0, 1, 1, 1, 1, -0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, 0.8, 0, 1,
-  0, 1, 1, 1, -0.8, 0.8, 0.8, 0, 0, 1, 1, 0, 1,
+  -0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0,
+  0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 0,
+  0.8, 0.8, 0.8, 0, 0, 1, 1, 1, 1,
+  -0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0,
+  0.8, 0.8, 0.8, 0, 1, 0, 1, 1, 1,
+  -0.8, 0.8, 0.8, 0, 0, 1, 1, 0, 1,
 
-  -0.8, 0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, 0.8, 0, 1, 0, 1, 1, 0, 0.8, 0.8,
-  -0.8, 0, 0, 1, 1, 1, 1, -0.8, 0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, -0.8, 0,
-  1, 0, 1, 1, 1, -0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
+  -0.8, 0.8, 0.8, 1, 0, 0, 1, 0, 0,
+  0.8, 0.8, 0.8, 0, 1, 0, 1, 1, 0,
+  0.8, 0.8, -0.8, 0, 0, 1, 1, 1, 1,
+  -0.8, 0.8, 0.8, 1, 0, 0, 1, 0, 0,
+  0.8, 0.8, -0.8, 0, 1, 0, 1, 1, 1,
+  -0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
+  
+  0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0,
+  0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0,
+  0.8, 0.8, -0.8, 0, 0, 1, 1, 1, 1,
+  0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0,
+  0.8, 0.8, -0.8, 0, 1, 0, 1, 1, 1,
+  0.8, 0.8, 0.8, 0, 0, 1, 1, 0, 1,
 
-  0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0, 0.8, 0.8,
-  -0.8, 0, 0, 1, 1, 1, 1, 0.8, -0.8, 0.8, 1, 0, 0, 1, 0, 0, 0.8, 0.8, -0.8, 0,
-  1, 0, 1, 1, 1, 0.8, 0.8, 0.8, 0, 0, 1, 1, 0, 1,
+  0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0,
+  -0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0,
+  -0.8, 0.8, -0.8, 0, 0, 1, 1, 1, 1,
+  0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0,
+  -0.8, 0.8, -0.8, 0, 1, 0, 1, 1, 1,
+  0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
 
-  0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0, -0.8,
-  0.8, -0.8, 0, 0, 1, 1, 1, 1, 0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, 0.8,
-  -0.8, 0, 1, 0, 1, 1, 1, 0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
+  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0,
+  0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0,
+  0.8, -0.8, 0.8, 0, 0, 1, 1, 1, 1,
+  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0,
+  0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 1,
+  -0.8, -0.8, 0.8, 0, 0, 1, 1, 0, 1,
 
-  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8, -0.8, 0, 1, 0, 1, 1, 0, 0.8,
-  -0.8, 0.8, 0, 0, 1, 1, 1, 1, -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, 0.8, -0.8,
-  0.8, 0, 1, 0, 1, 1, 1, -0.8, -0.8, 0.8, 0, 0, 1, 1, 0, 1,
-
-  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 0, -0.8,
-  0.8, 0.8, 0, 0, 1, 1, 1, 1, -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0, -0.8, 0.8,
-  0.8, 0, 1, 0, 1, 1, 1, -0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
+  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0,
+  -0.8, -0.8, 0.8, 0, 1, 0, 1, 1, 0,
+  -0.8, 0.8, 0.8, 0, 0, 1, 1, 1, 1,
+  -0.8, -0.8, -0.8, 1, 0, 0, 1, 0, 0,
+  -0.8, 0.8, 0.8, 0, 1, 0, 1, 1, 1,
+  -0.8, 0.8, -0.8, 0, 0, 1, 1, 0, 1,
 ]);
 
 const cubeGpuBuffer = device.createBuffer({
@@ -108,64 +125,35 @@ const idtty = new Matrix4().identity();
 const trans = new Float32Array(16);
 
 const transUniformBuffer = device.createBuffer({
-  label: "trans matrix",
+  label: 'trans matrix',
   size: trans.byteLength,
-  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
+  usage: GPUBufferUsage.COPY_DST|GPUBufferUsage.UNIFORM
 });
-console.log(trans.byteLength);
+console.log(trans.byteLength)
 
-device.queue.writeBuffer(transUniformBuffer, 0, trans);
+device.queue.writeBuffer(transUniformBuffer,0,trans);
+
 
 const t2 = new Float32Array([
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-  Math.random(),
-  Math.random(),
-  Math.random(),
-  0,
-]);
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+  Math.random(),Math.random(),Math.random(),0,
+])
 const t2UniformBuffer = device.createBuffer({
-  label: "random transf",
+  label: 'random transf',
   size: t2.byteLength,
-  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
-});
-console.log(t2.byteLength);
+  usage: GPUBufferUsage.COPY_DST|GPUBufferUsage.UNIFORM
+})
+console.log(t2.byteLength)
 
-device.queue.writeBuffer(t2UniformBuffer, 0, t2);
+device.queue.writeBuffer(t2UniformBuffer,0,t2);
 
 const shaderModule = device.createShaderModule({
   label: "shaders",
@@ -217,39 +205,25 @@ const pipeline = device.createRenderPipeline({
 });
 
 const bindGroup = device.createBindGroup({
-  label: "bind group",
-  layout: pipeline.getBindGroupLayout(0),
-  entries: [
-    { binding: 0, resource: sampler },
-    { binding: 1, resource: texture.createView() },
-    { binding: 2, resource: { buffer: transUniformBuffer } },
-    { binding: 3, resource: { buffer: t2UniformBuffer } },
-  ],
+  label:'bind group',
+  layout:pipeline.getBindGroupLayout(0),
+  entries:[
+    {binding: 0,resource:sampler},
+    {binding: 1,resource:texture.createView()},
+    {binding: 2,resource:{buffer:transUniformBuffer}},
+    {binding: 3,resource:{buffer:t2UniformBuffer}}
+  ]
 });
 
-let lastFrameTime: number | undefined = undefined;
+let lastFrameTime: number|undefined = undefined;
 
-const camera = new FpsCamera();
-camera.lookAtXyz(0, 0, -1);
-
-function drawAccordingToTimestamp(time: number) {
-  if (lastFrameTime === undefined) {
+function drawAccordingToTimestamp(time:number) {
+  if(lastFrameTime===undefined){
     lastFrameTime = time;
   }
   const dt = time - lastFrameTime;
-
-  camera.update(dt);
-  const lookAtMatrix = camera.mat();
-  idtty
-    .identity()
-    .translate([0, 0, 0])
-    .rotateZ((pi * dt) / 5000)
-    .rotateX((pi * dt) / 6000)
-    .rotateY((pi * dt) / 6000)
-    .scale(0.05)
-    .multiplyLeft(new Matrix4(lookAtMatrix))
-    .toArray(trans);
-  device.queue.writeBuffer(transUniformBuffer, 0, trans);
+  idtty.identity().translate([0,0,0]).rotateZ(pi*dt/5000).rotateX(pi*dt/6000).rotateY(pi*dt/6000).scale(0.05).toArray(trans);
+  device.queue.writeBuffer(transUniformBuffer,0,trans);
 
   const encoder = device.createCommandEncoder();
   const pass = encoder.beginRenderPass({
@@ -264,13 +238,12 @@ function drawAccordingToTimestamp(time: number) {
   });
   pass.setPipeline(pipeline);
   pass.setVertexBuffer(0, cubeGpuBuffer);
-  pass.setBindGroup(0, bindGroup);
-  pass.draw(6 * 6, 10);
+  pass.setBindGroup(0,bindGroup);
+  pass.draw(6*6,10);
   pass.end();
   device.queue.submit([encoder.finish()]);
 
   requestAnimationFrame(drawAccordingToTimestamp);
 }
 
-registerKeyboard();
 requestAnimationFrame(drawAccordingToTimestamp);
