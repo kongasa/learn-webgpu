@@ -9,3 +9,7 @@ front page
 math utils(math.gl?, Three/MathUtil?, math.js?)
 
 logic frame
+
+multiple shaders
+
+norm matrix
